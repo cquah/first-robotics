@@ -318,7 +318,11 @@ function () {
 			if (_playingField) {
 				config.fieldDimensions = _playingField.dimensions;
 				config.playingField = _playingField;
-			}
+       
+                if (_playingField.getFieldItems() != null) {
+                    console.log(_playingField.getFieldItems())
+                }
+            }
 
 			sensor.attachToRobot(this);
 			sensor.configure(config);

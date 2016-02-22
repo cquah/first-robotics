@@ -16,6 +16,7 @@ function() {
 
 		var _mountPoint;
 		var _fieldDimensions;
+        var _fieldObstacles;
 		var _field;
 
 		//TODO we might want to do something with the range stuff
@@ -87,6 +88,9 @@ function() {
 			if (config.fieldDimensions) {
 				_fieldDimensions = config.fieldDimensions;
 			}
+            if (config.fieldObstacles) {
+                _fieldObstacles = config.fieldObstacles;
+            }
 			if (config.mountPoint) {
 				_mountPoint = config.mountPoint;
 				if (_mountPoint == _robot.SensorMountPoint.CHASSIS) {
@@ -143,7 +147,69 @@ function() {
 			var angleRad;
 			var offset;
 			var distance;
-
+       
+            //Check for obstacles
+            var isObstacleInPath = false;
+       
+            if (angleToUse >= 0 && angleToUse < 90) {
+                angleRad = angleToUse / 180 * Math.PI;
+       
+                for (obstacle in _fieldObstacles) {
+                    //if (_fieldObstacles[obstacle].bottomRight > xCord
+                    //    && _fieldObstacles[obstacle].topRight > yCord ){
+                    //    Create forward vector and check for potential collision
+                    //    console.log("Obstacle might be in collision path!");
+                    //    isObstacleInPath = true;
+                    //}
+                }
+            }
+            else if (angleToUse >= 90 && angleToUse < 180) {
+                //Bottom-Right
+                angleRad = (angleToUse - 90) / 180 * Math.PI;
+       
+                for (obstacle in _fieldObstacles) {
+                    //if (_fieldObstacles[obstacle].bottomRight > xCord
+                    //    && _fieldObstacles[obstacle].topRight < yCord ){
+                    // Create forward vector and check for potential collision
+                    //    console.log("Obstacle might be in collision path!");
+                    //    isObstacleInPath = true;
+                    //}
+                }
+            }
+            else if (angleToUse >= 180 && angleToUse < 270) {
+                //Bottom-Left
+                angleRad = (angleToUse - 180) / 180 * Math.PI;
+       
+                for (obstacle in _fieldObstacles) {
+                    //if (_fieldObstacles[obstacle].bottomRight < xCord
+                    //    && _fieldObstacles[obstacle].topRight < yCord ){
+                    // Create forward vector and check for potential collision
+                    //    console.log("Obstacle might be in collision path!");
+                    //    isObstacleInPath = true;
+                    //}
+                }
+            }
+            else {
+                //Top-Left
+                angleRad = (angleToUse - 270) / 180 * Math.PI;
+       
+                for (obstacle in _fieldObstacles) {
+                    //if (_fieldObstacles[obstacle].bottomRight < xCord
+                    //    && _fieldObstacles[obstacle].topRight > yCord ){
+                    // Create forward vector and check for potential collision
+                    //    console.log("Obstacle might be in collision path!");
+                    //    isObstacleInPath = true;
+                    //}
+                }
+            }
+       
+       
+       
+            // Eventually we'll return a distance here, instead of the field distance.
+            //if (isObstacleInPath)
+       
+       
+       
 			//calculate the point at which we cross the borders
 			if (angleToUse >= 0 && angleToUse < 90) {
 				angleRad = angleToUse / 180 * Math.PI;
@@ -201,6 +267,7 @@ function() {
 					distance = pos.y / Math.sin(angleRad);
 				}
 			}
+       
 
 			if (distance) {
 				if (_showVisual) {

@@ -163,6 +163,10 @@ function () {
 		this.getFieldDimensionInfo = function () {
 			return _calculateDimensions(_simFieldDomElement, _fieldDimensions);
 		};
+       
+        this.getFieldItems = function () {
+            return _fieldItems;
+        };
 
 		//Given a logical measurement unit, convert to pixel measure
 		this.logicalToPixelOffset = function(input) {
