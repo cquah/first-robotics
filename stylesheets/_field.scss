@@ -1,0 +1,28 @@
+.sim-field {
+	position: absolute;
+
+	box-sizing: border-box;
+	border: 1px solid #000;
+	background: #efefef;
+}
+
+.sim-obstacle {
+	position: absolute;;
+	box-sizing: border-box;
+
+	&.color-GRAY {
+		background: #ababab;
+	}
+
+	&.color-RED {
+		background: red;
+	}
+
+	&.color-GREEN {
+		background: green;
+	}
+
+	&.color-BLUE {
+		background: blue;
+	}
+}
