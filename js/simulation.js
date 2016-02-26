@@ -79,8 +79,16 @@ function(Compiler, CoreLib, MathLib, RangeFinder, Gyro) {
 			_robot.leftSpeed = lSpeed;
 			_robot.rightSpeed = rSpeed;
 		}
-
-
+       
+       
+       function _robotTurnLeftImplementation() {
+            _robot.rightSpeed = 0;
+       }
+       
+       function _robotTurnRightImplementation() {
+            _robot.leftSpeed = 0;
+       }
+       
 		function _networkTableImplementation(varName, value) {
 			_fireEvent('networkTableValueUpdated', {
 				varName: varName,
@@ -110,6 +118,18 @@ function(Compiler, CoreLib, MathLib, RangeFinder, Gyro) {
 				},],
 				implementation: _robotSetSpeedImplementation
 			},
+            {
+                  name: 'Robot~turnLeft',
+                  retType: 'void',
+                  parameters: [],
+                  implementation: _robotTurnLeftImplementation
+            },
+            {
+                  name: 'Robot~turnRight',
+                  retType: 'void',
+                  parameters: [],
+                  implementation: _robotTurnRightImplementation
+            },
 			{
 				name: 'Robot~networkTable~putValue',
 				retType: 'void',
