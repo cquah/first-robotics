@@ -133,10 +133,18 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             var theField = new Field(document.getElementById('playingField'), fieldSize);
 
             //==== Add some obstacles ===
-            var obstacle1 = new FieldObstacle({x: 15, y: 15},
-                {width: 5, height: 10}, 0, FieldObstacle.ObstacleColor.RED);
-
+            var obstacle1 = new FieldObstacle({x: 15, y: 14}, 
+                {width: 3, height: 3}, 0, FieldObstacle.ObstacleColor.RED);
             theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
+
+	    var obstacle2 = new FieldObstacle({x: 10, y: 5}, {width: 4, height: 4}, 0, FieldObstacle.ObstacleColor.BLUE);
+            theField.addItem(obstacle2, theField.FieldItemType.OBSTACLE);
+
+	    var obstacle3 = new FieldObstacle({x: 35, y: 7}, {width: 4, height: 4}, 0, FieldObstacle.ObstacleColor.GREEN);
+	    theField.addItem(obstacle3, theField.FieldItemType.OBSTACLE);
+
+            var obstacle4 = new FieldObstacle({x: 30, y: 20}, {width: 3, height: 3}, 0, FieldObstacle.ObstacleColor.GRAY);
+	    theField.addItem(obstacle4, theField.FieldItemType.OBSTACLE);
 
             //==== End obstacles ====
 
@@ -414,7 +422,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             });
 
             function _resetRobot() {
-                robot.setPositionXY(10, 10);
+                robot.setPositionXY(20, 10);
                 robot.speed = 0;
                 robot.rotationalSpeed = 0;
                 robot.bearing = 0;

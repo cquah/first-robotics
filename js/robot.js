@@ -1,6 +1,6 @@
 /* robot.js */
-define([],
-function () {
+define(['utils/geomutil'],
+function (Geomutil) {
 	//TODO These Geom routines could go into a utility
 	function _getBoundingBox (position, dimensions, angle) {
 		//position.x/y, dimensions.width/height, angle in deg
@@ -150,6 +150,7 @@ function () {
 		var _sensors = [];
 
 		var _playingField = null;
+		var _obstacleBoundingBoxes = [];
 
 		//Event listeners
 		var _eventHandlers = {};
@@ -167,28 +168,9 @@ function () {
 			set: function (pos) {
 				_position = pos;
 				if (_playingField !== null) {
+
 					//generate bounding box and do collision detection with the walls
-					_boundingBox = _getBoundingBox(this.position, this.size, _bearing);
-					if (_boundingBox.x < 0 || _boundingBox.y < 0 ||
-						_boundingBox.x + _boundingBox.width > _playingField.dimensions.width ||
-						_boundingBox.y + _boundingBox.height > _playingField.dimensions.height) {
-						//collision!
-						this.leftSpeed = 0;
-						this.rightSpeed = 0;
-
-						if (!_collisionEventFired) {
-							_fireEvent('collision');
-							_collisionEventFired = true;
-						}
-
-						//TODO: We might need to set a limit so that our bounding
-						//box does not exceed field bounds
-					}
-					else {
-						//We passed the collision detection
-						//Set the eventFired flag to false
-						_collisionEventFired = false;
-					}
+					_boundingBox = Geomutil.getBoundingBox(this.position, this.size, _bearing);
 
 					var pxTopOffset = _playingField.logicalToPixelOffset(this.position.y);
 					var pxLeftOffset = _playingField.logicalToPixelOffset(this.position.x);
@@ -284,7 +266,7 @@ function () {
 					_boundingBoxElem.style.display = null;
 
 					if (_playingField) {
-						_boundingBox = _getBoundingBox(this.position, this.size, _bearing);
+						_boundingBox = Geomutil.getBoundingBox(this.position, this.size, _bearing);
 
 						var bbPxTop = _playingField.logicalToPixelOffset(_boundingBox.x);
 						var bbPxLeft = _playingField.logicalToPixelOffset(_boundingBox.y);
@@ -318,11 +300,7 @@ function () {
 			if (_playingField) {
 				config.fieldDimensions = _playingField.dimensions;
 				config.playingField = _playingField;
-       
-                if (_playingField.getFieldItems() != null) {
-                    console.log(_playingField.getFieldItems())
-                }
-            }
+			}
 
 			sensor.attachToRobot(this);
 			sensor.configure(config);
@@ -360,7 +338,7 @@ function () {
 					bearing: _bearing
 				});
 
-				_boundingBox = _getBoundingBox(this.position, this.size, _bearing);
+				_boundingBox = Geomutil.getBoundingBox(this.position, this.size, _bearing);
 
 				var bbPxTop = _playingField.logicalToPixelOffset(_boundingBox.x);
 				var bbPxLeft = _playingField.logicalToPixelOffset(_boundingBox.y);
@@ -373,6 +351,13 @@ function () {
 					width: bbPxWidth,
 					height: bbPxHeight
 				});
+
+				var fieldItems = field.getFieldItems();
+				for (var i = 0, len = fieldItems.length; i < len; i++) {
+					if (field.FieldItemType.OBSTACLE === fieldItems[i].type) {
+						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
+					}
+				}
 
 				var sensorConfig = {
 					fieldDimensions: _playingField.dimensions,
@@ -445,6 +430,48 @@ function () {
 			return returnObj;
 		}
 
+		function _boxesIntersect(boundingBox1, boundingBox2) {
+			var points1 = boundingBox1.points;
+			var points2 = boundingBox2.points;
+
+			// (0,0) is in the top left corner!
+			if (points1.bottomLeft.x < points2.bottomRight.x &&
+				points1.bottomRight.x > points2.bottomLeft.x &&
+				points1.bottomLeft.y > points2.topLeft.y &&
+				points1.topLeft.y < points2.bottomLeft.y)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		function _detectCollisions(newPos, size) {
+			_boundingBox = Geomutil.getBoundingBox(newPos, size, _bearing); 
+
+			if (_boundingBox.x < 0 || _boundingBox.y < 0 ||
+				_boundingBox.x + _boundingBox.width > _playingField.dimensions.width ||
+				_boundingBox.y + _boundingBox.height > _playingField.dimensions.height) {
+
+				//TODO: We might need to set a limit so that our bounding
+				//box does not exceed field bounds
+				console.log("Found a collision with field boundaries");
+				return true;
+			}
+
+			for (var i = 0; i < _obstacleBoundingBoxes.length; ++i) {
+				if (_boxesIntersect(_boundingBox, _obstacleBoundingBoxes[i])) {
+					console.log("Found a collision with an obstacle");
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		function _resolveCollisions() {
+			// Do nothing i.e. position of robot does not change
+		}
+
 		this.processTick = function(timeDelta) {
 			//timeDelta is how much time has elapsed between calls to tick (in ms)
 			var timeInSec = timeDelta / 1000;
@@ -459,8 +486,15 @@ function () {
 				newBearing += 360;
 			}
 			_bearing = newBearing;
-			this.position = newPos.position;
 
+			var collisionDetected = _detectCollisions(newPos.position, this.size); 
+
+			if (collisionDetected) {
+				_resolveCollisions();
+			}
+			else {
+				this.position = newPos.position;
+			}
 
 			//Send a message to all tick handlers with timeDelta
 			for (var i = 0, len = _tickCallbacks.length; i < len; i++) {
@@ -483,7 +517,7 @@ function () {
 				bearing: _bearing
 			});
 
-			_boundingBox = _getBoundingBox(this.position, this.size, _bearing);
+			_boundingBox = Geomutil.getBoundingBox(this.position, this.size, _bearing);
 			var bbPxTop = _playingField.logicalToPixelOffset(_boundingBox.x);
 			var bbPxLeft = _playingField.logicalToPixelOffset(_boundingBox.y);
 			var bbPxWidth = _playingField.logicalToPixelOffset(_boundingBox.width);
