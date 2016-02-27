@@ -132,14 +132,6 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
             var theField = new Field(document.getElementById('playingField'), fieldSize);
 
-            //==== Add some obstacles ===
-            var obstacle1 = new FieldObstacle({x: 15, y: 15},
-                {width: 5, height: 10}, 0, FieldObstacle.ObstacleColor.RED);
-
-            theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
-
-            //==== End obstacles ====
-
             robot.addEventHandler('collision', function() {
                 console.log('Robot had a collision!');
             });
@@ -178,6 +170,22 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 if (idx !== -1) {
                     editor.getSession().setValue(samples[idx].code);
                 }
+            });
+
+            //Load any fields
+            var fieldTypes = document.getElementById('fieldTypes');
+            var fields = Field.FieldNames;
+            for (var i = 0, len = fields.length; i < len; i++) {
+                var field = fields[i];
+                var opt = document.createElement('option');
+                opt.value = field.value;
+                opt.innerText = field.name;
+                fieldTypes.appendChild(opt);
+            }
+
+            var fieldTypeDropDown = document.getElementById('fieldTypes');
+            fieldTypeDropDown.addEventListener('change', function() {
+                theField.setField(parseInt(this.value));
             });
 
             //UI
@@ -294,6 +302,48 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                     simulation.stop();
                 }
                 else {
+                    // as long as the robot is the only item on the field, re-populate the obstacles
+                    if(theField.getFieldItemsSize() === 1)
+                    {
+                    	//==== Add some random obstacles ===
+    		            //this could be exported to its own function
+    		            //could replace these "boxes" with imgs
+    		            //warning: magic numbers in use
+    		            var numOfRndObstacles = document.getElementById('numOfObstacles').value;
+                        console.log("numOfRndObstacles: " + numOfRndObstacles);
+                        if(numOfRndObstacles === "" || isNaN(numOfRndObstacles)  || 
+                            numOfRndObstacles < theField.Obstacles.MIN || numOfRndObstacles > theField.Obstacles.MAX)
+                        {
+                            numOfRndObstacles = theField.Obstacles.DEFAULT; 
+                        }
+
+                        console.log("fieldTypeDropDown: " + fieldTypeDropDown.value);
+                        var fieldId = parseInt(fieldTypeDropDown.value);
+    		            for(var i = 0; i < numOfRndObstacles; i++) {
+    		            	var x = Math.floor(Math.random() * 50) + 1;  
+    		            	var y = Math.floor(Math.random() * 20) + 1;
+
+                            // don't draw to close to the robot
+                            if(Math.abs(x-robot.position.x) <= 2 && Math.abs(y-robot.position.y) <= 2)
+                            {
+                                console.log("continue");
+                                continue;
+                            }  
+
+    		            	var obstacle1 = new FieldObstacle( {x: x, y: y},
+                                { 
+                                    width: FieldObstacle.ObstacleSize.WIDTH, 
+                                    height: FieldObstacle.ObstacleSize.HEIGHT
+                                }, 
+                                0, fieldId, (fieldId === -1) 
+                            );
+
+    						theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
+    		            }
+    				
+    		            //==== End obstacles ====
+                    }
+            
                     //reset the network tables
                     networkTableValues = {};
                     networkTableDataSource.localdata = _generateNetworkTableView(networkTableValues);
@@ -374,6 +424,11 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 if (simulation) {
                     simulation.reset();
                     startStopBtn.disabled = false;
+
+                    if(!simulation.isRunning)
+                    {
+                        theField.resetFieldItems();
+                    }
                 }
             });
 

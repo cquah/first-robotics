@@ -13,7 +13,7 @@
 			<div id="mainTabs">
 				<ul>
 					<li>Code Editor</li>
-					<li>Environment Setup</li>
+					<li style="display: none;" >Environment Setup</li>
 				</ul>
 				<div>
 					<div id="codeArea">
@@ -28,7 +28,12 @@
 								<select id="cboSamples"></select>
 							</label>
 							<button id="btnLoadSample">Load</button>
-							
+							<label>Load Field
+								<select id="fieldTypes"></select>
+							</label>
+							<label>Obstacle Count<label>
+							<input type="number" id="numOfObstacles" title="0 <= # of obstacles <= 15" min="0" max="15"/>
+
 						</div>
 						<div id="editorArea"></div>
 					</div>
@@ -55,12 +60,12 @@
 						<div>Add Sensor</div>
 						<div style="padding: 5px">
 							<div>
-								<label>Sensor Name: 
+								<label>Sensor Name:
 									<input type="text" id="txtSensorName"/>
 								</label>
 							</div>
 							<div>
-								<label>Sensor Type: 
+								<label>Sensor Type:
 									<select id="cboSensorType">
 										<option value="RangeFinder">Range Finder</option>
 										<option value="Gyro">Gyro</option>
@@ -68,7 +73,7 @@
 								</label>
 							</div>
 							<div>
-								<label>Position: 
+								<label>Position:
 									<select id="cboSensorPosition">
 										<option value="0">Chassis</option>
 										<option value="1">Front</option>
@@ -84,7 +89,7 @@
 					<hr/>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<div>
 			<div id="outputSplitter">
 				<div id="playingField"></div>
@@ -92,7 +97,7 @@
 					<ul>
 						<li>Compiler Output</li>
 						<li>Console Output</li>
-						<li>Network Tables</li>
+						<li style="display: none;">Network Tables</li>
 					</ul>
 					<div id="compilerOutputArea">
 						<div id="compilerOutput"></div>

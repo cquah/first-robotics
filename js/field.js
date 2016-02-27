@@ -60,6 +60,8 @@ function () {
 			height: 100
 		};
 
+		var _fields =  ['Soccer Field'];
+
 		var _fieldUnits = this.FieldUnits.FEET;
 
 		//This is the containing DIV
@@ -69,6 +71,12 @@ function () {
 		var _simFieldDomElement = document.createElement('div');
 		_simFieldDomElement.classList.add('sim-field');
 		_fieldDomElement.appendChild(_simFieldDomElement);
+
+		// This will setup the field background the user selects
+		var _simFieldBackgroundDomElement = document.createElement('img');
+		_simFieldBackgroundDomElement.id = "fieldImg";
+		_simFieldBackgroundDomElement.classList.add('sim-background');		
+		_simFieldDomElement.appendChild(_simFieldBackgroundDomElement);
 
 		//Array of items on the field
 		// {
@@ -160,6 +168,21 @@ function () {
 
 		}.bind(this);
 
+		this.resetFieldItems = function () {
+			// keep the robot only
+			_fieldItems.splice(1,_fieldItems.length);
+			
+			// remove all obstacles
+			var elements = document.getElementsByClassName('sim-obstacle');
+		    while(elements.length > 0){
+		        elements[0].parentNode.removeChild(elements[0]);
+		    }
+		};
+
+		this.getFieldItemsSize = function () {
+			return _fieldItems.length;
+		};	
+
 		this.getFieldDimensionInfo = function () {
 			return _calculateDimensions(_simFieldDomElement, _fieldDimensions);
 		};
@@ -178,6 +201,22 @@ function () {
 				width: _simFieldDomElement.clientWidth,
 				height: _simFieldDomElement.clientHeight
 			};
+		};
+
+		this.setField = function(fieldType) {
+			var fieldImg = document.getElementById("fieldImg");
+			switch(fieldType)
+			{
+				case this.FieldType.SOCCER:
+					fieldImg.src = "img/soccer_field.png";
+					break;
+				case this.FieldType.POKEMON:
+					fieldImg.src = "img/pokemon_field.png";
+					break;
+				default:
+					fieldImg.src = "";
+					break;
+			}
 		};
 
 		this.forceRedraw = function () {
@@ -220,6 +259,24 @@ function () {
 		ROBOT: 0,
 		OBSTACLE: 1
 	};
+
+	Field.prototype.Obstacles = {
+		MIN: 0,
+		MAX: 100,
+		DEFAULT: 10
+	};
+
+	Field.prototype.FieldType = {
+		SOCCER: 0,
+		POKEMON: 1
+	};
+
+	Field.FieldType = {
+		SOCCER: 0,
+		POKEMON: 1
+	};
+
+	Field.FieldNames = [ { name : "", value : -1 }, { name : "Soccer", value : 0 }, { name : "Pokemon", value : 1 } ];
 
 	return Field;
 });
