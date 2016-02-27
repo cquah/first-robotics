@@ -1,5 +1,5 @@
-define([],
-function() {
+define(['utils/geomutil'],
+function(Geomutil) {
 
 	function _redraw(elem, visualPositionInfo) {
 		var top = (visualPositionInfo.y - (visualPositionInfo.height / 2)) + 'px';
@@ -122,6 +122,10 @@ function() {
 				});
 			}
 		};
+
+		this.getBoundingBox = function() {
+			return Geomutil.getBoundingBox(_position, _size, _angle);
+		}
 	};
 
 	FieldObstacle.ObstacleSize = {

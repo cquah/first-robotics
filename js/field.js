@@ -163,7 +163,6 @@ function () {
 
 			if (item.domElement !== undefined) {
 				_simFieldDomElement.appendChild(item.domElement);
-				console.log("ADDED item");
 			}
 
 		}.bind(this);
@@ -186,10 +185,6 @@ function () {
 		this.getFieldDimensionInfo = function () {
 			return _calculateDimensions(_simFieldDomElement, _fieldDimensions);
 		};
-       
-        this.getFieldItems = function () {
-            return _fieldItems;
-        };
 
 		//Given a logical measurement unit, convert to pixel measure
 		this.logicalToPixelOffset = function(input) {
@@ -202,6 +197,10 @@ function () {
 				height: _simFieldDomElement.clientHeight
 			};
 		};
+
+		this.getFieldItems = function() {
+			return _fieldItems;
+		}
 
 		this.setField = function(fieldType) {
 			var fieldImg = document.getElementById("fieldImg");

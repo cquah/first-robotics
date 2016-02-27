@@ -129,7 +129,6 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
             _resetRobot();
 
-
             var theField = new Field(document.getElementById('playingField'), fieldSize);
 
             robot.addEventHandler('collision', function() {
@@ -469,7 +468,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             });
 
             function _resetRobot() {
-                robot.setPositionXY(10, 10);
+                robot.setPositionXY(20, 10);
                 robot.speed = 0;
                 robot.rotationalSpeed = 0;
                 robot.bearing = 0;

@@ -63,6 +63,10 @@ function() {
 		var boundingBox = {
 			x: minMaxPoints.minX,
 			y: minMaxPoints.minY,
+			minX: minMaxPoints.minX,
+			minY: minMaxPoints.minY,
+                        maxX: minMaxPoints.maxX,
+                        maxY: minMaxPoints.maxY,
 			width: minMaxPoints.maxX - minMaxPoints.minX,
 			height: minMaxPoints.maxY - minMaxPoints.minY,
 			points: {
