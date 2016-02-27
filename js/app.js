@@ -172,6 +172,22 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 }
             });
 
+            //Load any fields
+            var fieldTypes = document.getElementById('fieldTypes');
+            var fields = Field.FieldNames;
+            for (var i = 0, len = fields.length; i < len; i++) {
+                var field = fields[i];
+                var opt = document.createElement('option');
+                opt.value = field.value;
+                opt.innerText = field.name;
+                fieldTypes.appendChild(opt);
+            }
+
+            var fieldTypeDropDown = document.getElementById('fieldTypes');
+            fieldTypeDropDown.addEventListener('change', function() {
+                theField.setField(parseInt(this.value));
+            });
+
             //UI
             $('#mainSplitter').jqxSplitter( { height: '100%', width: '100%', orientation: 'vertical', panels: [{size: '50%'}, {size:'50%'}]});
             $('#outputSplitter').jqxSplitter({height: '100%', width: '100%', orientation: 'horizontal', panels: [{size: '50%'}, {size: '50%'}]});
@@ -301,6 +317,8 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                             numOfRndObstacles = theField.Obstacles.DEFAULT; 
                         }
 
+                        console.log("fieldTypeDropDown: " + fieldTypeDropDown.value);
+                        var fieldId = parseInt(fieldTypeDropDown.value);
     		            for(var i = 0; i < numOfRndObstacles; i++) {
     		            	var x = Math.floor(Math.random() * 50) + 1;  
     		            	var y = Math.floor(Math.random() * 20) + 1;
@@ -317,7 +335,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                                     width: FieldObstacle.ObstacleSize.WIDTH, 
                                     height: FieldObstacle.ObstacleSize.HEIGHT
                                 }, 
-                                0, FieldObstacle.ObstacleColor.RED 
+                                0, fieldId, (fieldId === -1) 
                             );
 
     						theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
@@ -408,7 +426,6 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                     startStopBtn.disabled = false;
 
                     theField.resetFieldItems();
-                    theField.addItem(robot, theField.FieldItemType.ROBOT);
                 }
             });
 

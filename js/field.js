@@ -60,6 +60,8 @@ function () {
 			height: 100
 		};
 
+		var _fields =  ['Soccer Field'];
+
 		var _fieldUnits = this.FieldUnits.FEET;
 
 		//This is the containing DIV
@@ -69,6 +71,12 @@ function () {
 		var _simFieldDomElement = document.createElement('div');
 		_simFieldDomElement.classList.add('sim-field');
 		_fieldDomElement.appendChild(_simFieldDomElement);
+
+		// This will setup the field background the user selects
+		var _simFieldBackgroundDomElement = document.createElement('div');
+		_simFieldBackgroundDomElement.id = "fieldImg";
+		_simFieldBackgroundDomElement.classList.add('sim-background');		
+		_simFieldDomElement.appendChild(_simFieldBackgroundDomElement);
 
 		//Array of items on the field
 		// {
@@ -161,10 +169,14 @@ function () {
 		}.bind(this);
 
 		this.resetFieldItems = function () {
-			_fieldItems.splice(0,_fieldItems.length);
-			while (_simFieldDomElement.firstChild) {
-			    _simFieldDomElement.removeChild(_simFieldDomElement.firstChild);
-			}
+			// keep the robot only
+			_fieldItems.splice(1,_fieldItems.length);
+			
+			// remove all obstacles
+			var elements = document.getElementsByClassName('sim-obstacle');
+		    while(elements.length > 0){
+		        elements[0].parentNode.removeChild(elements[0]);
+		    }
 		};
 
 		this.getFieldItemsSize = function () {
@@ -189,6 +201,19 @@ function () {
 				width: _simFieldDomElement.clientWidth,
 				height: _simFieldDomElement.clientHeight
 			};
+		};
+
+		this.setField = function(fieldType) {
+			var fieldImg = document.getElementById("fieldImg");
+			switch(fieldType)
+			{
+				case this.FieldType.SOCCER:
+					fieldImg.style.backgroundImage = "url('img/soccer_field.png')";
+					break;
+				default:
+					fieldImg.style.backgroundImage = "none";
+					break;
+			}
 		};
 
 		this.forceRedraw = function () {
@@ -237,6 +262,16 @@ function () {
 		MAX: 100,
 		DEFAULT: 10
 	};
+
+	Field.prototype.FieldType = {
+		SOCCER: 0
+	};
+
+	Field.FieldType = {
+		SOCCER: 0
+	};
+
+	Field.FieldNames = [ { name : "", value : -1 }, { name : "Soccer", value : 0 } ];
 
 	return Field;
 });

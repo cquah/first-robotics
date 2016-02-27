@@ -11,31 +11,47 @@ function() {
 		elem.style.height = visualPositionInfo.height + 'px';
 	}
 	
-	function FieldObstacle(position, size, angle, color) {
+	function FieldObstacle(position, size, angle, code, isColor) {
 		var _domElement = document.createElement('div');
 		_domElement.classList.add('sim-obstacle');
 
 		var _playingField;
 
-		if (!color) {
-			color = this.ObstacleColor.GRAY;
-		}
+		/*if (!code) {
+			code = this.ObstacleColor.GRAY;
+		}*/
 
-		switch (color) {
-			case this.ObstacleColor.GRAY:
-				_domElement.classList.add('color-GRAY');
-				break;
-			case this.ObstacleColor.RED:
-				_domElement.classList.add('color-RED');
-				break;
-			case this.ObstacleColor.GREEN:
-				_domElement.classList.add('color-GREEN');
-				break;
-			case this.ObstacleColor.BLUE:
-				_domElement.classList.add('color-BLUE');
-				break;
-			default:
-				_domElement.classList.add('color-GRAY');
+		// keep color code for now, just in case
+		if(isColor)
+		{
+			switch (code) {
+				case this.ObstacleColor.GRAY:
+					_domElement.classList.add('color-GRAY');
+					break;
+				case this.ObstacleColor.RED:
+					_domElement.classList.add('color-RED');
+					break;
+				case this.ObstacleColor.GREEN:
+					_domElement.classList.add('color-GREEN');
+					break;
+				case this.ObstacleColor.BLUE:
+					_domElement.classList.add('color-BLUE');
+					break;
+				default:
+					_domElement.classList.add('color-GRAY');
+			}
+		} else {
+			console.log("USING OBSTACLE: " + code);
+			switch (code) {
+				case this.ObstacleType.SOCCER:
+					console.log("USING SOCCER");
+					_domElement.classList.add('sim-obstacle-img');
+					_domElement.style.backgroundImage = "url('img/soccer_ball.png')";
+					break;
+				default:
+					console.log("USING DEFAULT");
+					_domElement.classList.add('color-GRAY');
+			}
 		}
 
 		var _position = position;
@@ -106,16 +122,16 @@ function() {
 		};
 	};
 
+	FieldObstacle.ObstacleSize = {
+		WIDTH: 2,
+		HEIGHT: 2
+	}
+
 	FieldObstacle.prototype.ObstacleColor = {
 		GRAY: 0,
 		RED: 1,
 		GREEN: 2,
-		BLUE: 3,
-	}
-
-	FieldObstacle.ObstacleSize = {
-		WIDTH: 2,
-		HEIGHT: 2
+		BLUE: 3
 	}
 
 	FieldObstacle.ObstacleColor = {
@@ -123,6 +139,16 @@ function() {
 		RED: 1,
 		GREEN: 2,
 		BLUE: 3,
+	}
+
+	FieldObstacle.prototype.ObstacleType = {
+		INVALID: -1,
+		SOCCER: 0
+	}
+
+	FieldObstacle.ObstacleType = {
+		INVALID: -1,
+		SOCCER: 0
 	}
 
 	return FieldObstacle;

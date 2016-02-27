@@ -144,3 +144,27 @@
     background: green; }
   .sim-obstacle.color-BLUE {
     background: blue; }
+
+.sim-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: round;
+  background-size: contain;
+  max-width:100%;
+  max-height:100%;
+}
+
+.sim-obstacle-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-size: contain;
+  max-width:100%;
+  max-height:100%;
+}
