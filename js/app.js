@@ -425,7 +425,10 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                     simulation.reset();
                     startStopBtn.disabled = false;
 
-                    theField.resetFieldItems();
+                    if(!simulation.isRunning)
+                    {
+                        theField.resetFieldItems();
+                    }
                 }
             });
 

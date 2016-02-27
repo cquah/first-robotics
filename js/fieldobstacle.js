@@ -41,12 +41,14 @@ function() {
 					_domElement.classList.add('color-GRAY');
 			}
 		} else {
-			console.log("USING OBSTACLE: " + code);
 			switch (code) {
 				case this.ObstacleType.SOCCER:
-					console.log("USING SOCCER");
 					_domElement.classList.add('sim-obstacle-img');
 					_domElement.style.backgroundImage = "url('img/soccer_ball.png')";
+					break;
+				case this.ObstacleType.POKEMON:
+					_domElement.classList.add('sim-obstacle-img');
+					_domElement.style.backgroundImage = "url('img/poke_ball.png')";
 					break;
 				default:
 					console.log("USING DEFAULT");
@@ -143,12 +145,14 @@ function() {
 
 	FieldObstacle.prototype.ObstacleType = {
 		INVALID: -1,
-		SOCCER: 0
+		SOCCER: 0,
+		POKEMON: 1
 	}
 
 	FieldObstacle.ObstacleType = {
 		INVALID: -1,
-		SOCCER: 0
+		SOCCER: 0,
+		POKEMON: 1
 	}
 
 	return FieldObstacle;

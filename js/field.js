@@ -73,7 +73,7 @@ function () {
 		_fieldDomElement.appendChild(_simFieldDomElement);
 
 		// This will setup the field background the user selects
-		var _simFieldBackgroundDomElement = document.createElement('div');
+		var _simFieldBackgroundDomElement = document.createElement('img');
 		_simFieldBackgroundDomElement.id = "fieldImg";
 		_simFieldBackgroundDomElement.classList.add('sim-background');		
 		_simFieldDomElement.appendChild(_simFieldBackgroundDomElement);
@@ -208,10 +208,13 @@ function () {
 			switch(fieldType)
 			{
 				case this.FieldType.SOCCER:
-					fieldImg.style.backgroundImage = "url('img/soccer_field.png')";
+					fieldImg.src = "img/soccer_field.png";
+					break;
+				case this.FieldType.POKEMON:
+					fieldImg.src = "img/pokemon_field.png";
 					break;
 				default:
-					fieldImg.style.backgroundImage = "none";
+					fieldImg.src = "";
 					break;
 			}
 		};
@@ -264,14 +267,16 @@ function () {
 	};
 
 	Field.prototype.FieldType = {
-		SOCCER: 0
+		SOCCER: 0,
+		POKEMON: 1
 	};
 
 	Field.FieldType = {
-		SOCCER: 0
+		SOCCER: 0,
+		POKEMON: 1
 	};
 
-	Field.FieldNames = [ { name : "", value : -1 }, { name : "Soccer", value : 0 } ];
+	Field.FieldNames = [ { name : "", value : -1 }, { name : "Soccer", value : 0 }, { name : "Pokemon", value : 1 } ];
 
 	return Field;
 });
