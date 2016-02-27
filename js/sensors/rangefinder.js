@@ -20,7 +20,7 @@ function() {
 			var bb = obstacleBBs[i];
 			console.log("Checking obstacle, minX = " + bb.minX + " maxY = " + bb.maxY);
 
-			if (angleRad > 0) {
+			if (angleRad > 0 && bb.minX >= sensorX) {
 				// Solve for intersection given an x, i.e. left side of obstacle
 				// This is only possible if angleRad > 0
 				var yPoint = -gradient * bb.minX + constant; 
@@ -38,6 +38,10 @@ function() {
 						distance = newDistance;
 					}
 				}
+			}
+
+			if (bb.maxY > sensorY) {
+				continue;
 			}
 
 			// Solve for intersection given a y, i.e. bottom side of obstacle
@@ -76,21 +80,27 @@ function() {
 			var bb = obstacleBBs[i];
 			console.log("Checking obstacle, minX = " + bb.minX + " minY = " + bb.minY);
 
-			// Solve for intersection given an x, i.e. left side of obstacle
-			var yPoint = gradient * bb.minX + constant; 
-			console.log("yPoint = " + yPoint);
+			if (bb.minX >= sensorX) {
+				// Solve for intersection given an x, i.e. left side of obstacle
+				var yPoint = gradient * bb.minX + constant; 
+				console.log("yPoint = " + yPoint);
 
-			// Then check if this yPoint falls within the object boundary
-			if (yPoint >= bb.minY && yPoint <= bb.maxY) {
-				console.log("Point falls within left boundary");
+				// Then check if this yPoint falls within the object boundary
+				if (yPoint >= bb.minY && yPoint <= bb.maxY) {
+					console.log("Point falls within left boundary");
 
-				// Solve for distance
-				var deltaX = Math.abs(bb.minX - sensorX);
-				var deltaY = Math.abs(yPoint - sensorY);
-				var newDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-				if (newDistance < distance) {
-					distance = newDistance;
+					// Solve for distance
+					var deltaX = Math.abs(bb.minX - sensorX);
+					var deltaY = Math.abs(yPoint - sensorY);
+					var newDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+					if (newDistance < distance) {
+						distance = newDistance;
+					}
 				}
+			}
+
+			if (bb.minY < sensorY) {
+				continue;
 			}
 
 			// Solve for intersection given a y, i.e. top side of obstacle
@@ -126,7 +136,7 @@ function() {
 			var bb = obstacleBBs[i];
 			console.log("Checking obstacle, maxX = " + bb.maxX + " minY = " + bb.minY);
 
-			if (angleRad > 0) {
+			if (angleRad > 0 && bb.maxX <= sensorX) {
 				// Solve for intersection given an x, i.e. right side of obstacle
 				// This is only possible if angleRad > 0
 				var yPoint = -gradient * bb.maxX + constant; 
@@ -144,6 +154,10 @@ function() {
 						distance = newDistance;
 					}
 				}
+			}
+
+			if (bb.minY < sensorY) {
+				continue;
 			}
 
 			// Solve for intersection given a y, i.e. top side of obstacle
@@ -182,21 +196,27 @@ function() {
 			var bb = obstacleBBs[i];
 			console.log("Checking obstacle, maxX = " + bb.maxX + " maxY = " + bb.maxY);
 
-			// Solve for intersection given an x, i.e. right side of obstacle
-			var yPoint = gradient * bb.maxX + constant; 
-			console.log("yPoint = " + yPoint);
+			if (bb.maxX <= sensorX) {
+				// Solve for intersection given an x, i.e. right side of obstacle
+				var yPoint = gradient * bb.maxX + constant; 
+				console.log("yPoint = " + yPoint);
 
-			// Then check if this yPoint falls within the object boundary
-			if (yPoint >= bb.minY && yPoint <= bb.maxY) {
-				console.log("Point falls within left boundary");
+				// Then check if this yPoint falls within the object boundary
+				if (yPoint >= bb.minY && yPoint <= bb.maxY) {
+					console.log("Point falls within left boundary");
 
-				// Solve for distance
-				var deltaX = Math.abs(bb.maxX - sensorX);
-				var deltaY = Math.abs(yPoint - sensorY);
-				var newDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-				if (newDistance < distance) {
-					distance = newDistance;
+					// Solve for distance
+					var deltaX = Math.abs(bb.maxX - sensorX);
+					var deltaY = Math.abs(yPoint - sensorY);
+					var newDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+					if (newDistance < distance) {
+						distance = newDistance;
+					}
 				}
+			}
+
+			if (bb.maxY > sensorY) {
+				continue;
 			}
 
 			// Solve for intersection given a y, i.e. bottom side of obstacle
@@ -299,20 +319,6 @@ function() {
 			this._redraw();
 		};
 
-		// TODO: refactor, this should not belong here
-		this.refreshObstacles = function() {
-			if (_field != null) {
-				_obstacleBoundingBoxes = [];
-                                var fieldItems = _field.getFieldItems();
-                                for (var i = 0, len = fieldItems.length; i < len; ++i) {
-					if (_field.FieldItemType.OBSTACLE === fieldItems[i].type) {
-						console.log("Adding obstacle bounding box");
-						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
-					}
-				}
-			}
-		}
-
 		this.configure = function (config) {
 			if (!_robot) {
 				console.warn('Sensor not connected to robot');
@@ -330,8 +336,14 @@ function() {
 			}
 			if (config.playingField) {
 				_field = config.playingField;
+                                var fieldItems = _field.getFieldItems();
+                                for (var i = 0, len = fieldItems.length; i < len; ++i) {
+					if (_field.FieldItemType.OBSTACLE === fieldItems[i].type) {
+						console.log("Adding obstacle bounding box");
+						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
+					}
+				}
 			}
-			this.refreshObstacles();
 
 			if (config.showVisual !== undefined) {
 				_showVisual = config.showVisual;
