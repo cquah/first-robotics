@@ -113,6 +113,11 @@ function() {
 		BLUE: 3,
 	}
 
+	FieldObstacle.ObstacleSize = {
+		WIDTH: 2,
+		HEIGHT: 2
+	}
+
 	FieldObstacle.ObstacleColor = {
 		GRAY: 0,
 		RED: 1,

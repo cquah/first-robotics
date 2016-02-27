@@ -132,14 +132,6 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
             var theField = new Field(document.getElementById('playingField'), fieldSize);
 
-            //==== Add some obstacles ===
-            var obstacle1 = new FieldObstacle({x: 15, y: 15},
-                {width: 5, height: 10}, 0, FieldObstacle.ObstacleColor.RED);
-
-            theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
-
-            //==== End obstacles ====
-
             robot.addEventHandler('collision', function() {
                 console.log('Robot had a collision!');
             });
@@ -294,6 +286,39 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                     simulation.stop();
                 }
                 else {
+                    // as long as the robot is the only item on the field, re-populate the obstacles
+                    if(theField.getFieldItemsSize() === 1)
+                    {
+                    	//==== Add some random obstacles ===
+    		            //this could be exported to its own function
+    		            //could replace these "boxes" with imgs
+    		            //warning: magic numbers in use
+    		            var numOfRndObstacles = document.getElementById('numOfObstacles').value;
+                        console.log("numOfRndObstacles: " + numOfRndObstacles);
+                        if(numOfRndObstacles === "" || isNaN(numOfRndObstacles)  || 
+                            numOfRndObstacles < theField.Obstacles.MIN || numOfRndObstacles > theField.Obstacles.MAX)
+                        {
+                            numOfRndObstacles = theField.Obstacles.DEFAULT; 
+                        }
+
+    		            for(var i = 0; i < numOfRndObstacles; i++) {
+    		            	var x = Math.floor(Math.random() * 50) + 1;  
+    		            	var y = Math.floor(Math.random() * 20) + 1;  
+
+    		            	var obstacle1 = new FieldObstacle( {x: x, y: y},
+                                { 
+                                    width: FieldObstacle.ObstacleSize.WIDTH, 
+                                    height: FieldObstacle.ObstacleSize.HEIGHT
+                                }, 
+                                0, FieldObstacle.ObstacleColor.RED 
+                            );
+
+    						theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
+    		            }
+    				
+    		            //==== End obstacles ====
+                    }
+            
                     //reset the network tables
                     networkTableValues = {};
                     networkTableDataSource.localdata = _generateNetworkTableView(networkTableValues);
@@ -374,6 +399,9 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 if (simulation) {
                     simulation.reset();
                     startStopBtn.disabled = false;
+
+                    theField.resetFieldItems();
+                    theField.addItem(robot, theField.FieldItemType.ROBOT);
                 }
             });
 

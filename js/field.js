@@ -160,6 +160,17 @@ function () {
 
 		}.bind(this);
 
+		this.resetFieldItems = function () {
+			_fieldItems.splice(0,_fieldItems.length);
+			while (_simFieldDomElement.firstChild) {
+			    _simFieldDomElement.removeChild(_simFieldDomElement.firstChild);
+			}
+		};
+
+		this.getFieldItemsSize = function () {
+			return _fieldItems.length;
+		};	
+
 		this.getFieldDimensionInfo = function () {
 			return _calculateDimensions(_simFieldDomElement, _fieldDimensions);
 		};
@@ -219,6 +230,12 @@ function () {
 	Field.prototype.FieldItemType = {
 		ROBOT: 0,
 		OBSTACLE: 1
+	};
+
+	Field.prototype.Obstacles = {
+		MIN: 0,
+		MAX: 15,
+		DEFAULT: 10
 	};
 
 	return Field;
