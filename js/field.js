@@ -234,7 +234,7 @@ function () {
 
 	Field.prototype.Obstacles = {
 		MIN: 0,
-		MAX: 15,
+		MAX: 100,
 		DEFAULT: 10
 	};
 

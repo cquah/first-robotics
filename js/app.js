@@ -303,7 +303,14 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
     		            for(var i = 0; i < numOfRndObstacles; i++) {
     		            	var x = Math.floor(Math.random() * 50) + 1;  
-    		            	var y = Math.floor(Math.random() * 20) + 1;  
+    		            	var y = Math.floor(Math.random() * 20) + 1;
+
+                            // don't draw to close to the robot
+                            if(Math.abs(x-robot.position.x) <= 2 && Math.abs(y-robot.position.y) <= 2)
+                            {
+                                console.log("continue");
+                                continue;
+                            }  
 
     		            	var obstacle1 = new FieldObstacle( {x: x, y: y},
                                 { 
