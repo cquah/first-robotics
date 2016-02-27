@@ -320,6 +320,19 @@ function (Geomutil) {
 			_sensors.length = 0;
 		}
 
+		this.refreshObstacles = function() {
+			if (_playingField == null) {
+				return;
+			}
+			_obstacleBoundingBoxes = [];
+			var fieldItems = _playingField.getFieldItems();
+			for (var i = 0, len = fieldItems.length; i < len; i++) {
+				if (_playingField.FieldItemType.OBSTACLE === fieldItems[i].type) {
+					_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
+				}
+			}
+		}
+
 		//Field related functionality
 		this.registerWithField = function (field) {
 			_playingField = field;
@@ -352,12 +365,7 @@ function (Geomutil) {
 					height: bbPxHeight
 				});
 
-				var fieldItems = field.getFieldItems();
-				for (var i = 0, len = fieldItems.length; i < len; i++) {
-					if (field.FieldItemType.OBSTACLE === fieldItems[i].type) {
-						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
-					}
-				}
+				this.refreshObstacles();
 
 				var sensorConfig = {
 					fieldDimensions: _playingField.dimensions,

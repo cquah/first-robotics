@@ -299,6 +299,20 @@ function() {
 			this._redraw();
 		};
 
+		// TODO: refactor, this should not belong here
+		this.refreshObstacles = function() {
+			if (_field != null) {
+				_obstacleBoundingBoxes = [];
+                                var fieldItems = _field.getFieldItems();
+                                for (var i = 0, len = fieldItems.length; i < len; ++i) {
+					if (_field.FieldItemType.OBSTACLE === fieldItems[i].type) {
+						console.log("Adding obstacle bounding box");
+						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
+					}
+				}
+			}
+		}
+
 		this.configure = function (config) {
 			if (!_robot) {
 				console.warn('Sensor not connected to robot');
@@ -316,14 +330,8 @@ function() {
 			}
 			if (config.playingField) {
 				_field = config.playingField;
-                                var fieldItems = _field.getFieldItems();
-                                for (var i = 0, len = fieldItems.length; i < len; ++i) {
-					if (_field.FieldItemType.OBSTACLE === fieldItems[i].type) {
-						console.log("Adding obstacle bounding box");
-						_obstacleBoundingBoxes.push(fieldItems[i].item.getBoundingBox());
-					}
-				}
 			}
+			this.refreshObstacles();
 
 			if (config.showVisual !== undefined) {
 				_showVisual = config.showVisual;

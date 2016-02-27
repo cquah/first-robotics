@@ -339,6 +339,10 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
     						theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
     		            }
+
+			    //TODO change the owners of these methods / logic for refreshing pre-loading of obstacles for robot
+			    robot.refreshObstacles();
+			    robot.getSensor(0).refreshObstacles();
     				
     		            //==== End obstacles ====
                     }
