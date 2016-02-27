@@ -321,7 +321,7 @@ function (Geomutil) {
 		}
 
 		this.refreshObstacles = function() {
-			if (_playingField == null) {
+			if (!_playingField) {
 				return;
 			}
 			_obstacleBoundingBoxes = [];
