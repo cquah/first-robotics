@@ -125,7 +125,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             var errorLine = null;
             var EditorRange = ace.require('ace/range').Range;
 
-            var robot = new Robot({width: 2, height: 2});
+            var robot = new Robot({width: 1, height: 2});
 
             _resetRobot();
 
