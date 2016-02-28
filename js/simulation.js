@@ -75,10 +75,29 @@ function(Compiler, CoreLib, MathLib, RangeFinder, Gyro) {
 			});
 		}
 
-		function _robotSetSpeedImplementation(lSpeed, rSpeed) {
+		function _robotDriveImplementation(lSpeed, rSpeed) {
 			_robot.leftSpeed = lSpeed;
 			_robot.rightSpeed = rSpeed;
 		}
+       
+       function _robotForwardImplementation(){
+            _robot.leftSpeed = _robot.savedSpeed;
+            _robot.rightSpeed = _robot.savedSpeed;
+       }
+
+       function _robotReverseImplementation(){
+            _robot.leftSpeed = -(_robot.savedSpeed);
+            _robot.rightSpeed = -(_robot.savedSpeed);
+       }
+       
+       function _robotStopImplementation(){
+            _robot.leftSpeed = 0;
+            _robot.rightSpeed = 0;
+       }
+       
+       function _robotSetSpeedImplementation(speed) {
+            _robot.savedSpeed = speed;
+       }
        
        
        function _robotTurnLeftImplementation() {
@@ -116,8 +135,35 @@ function(Compiler, CoreLib, MathLib, RangeFinder, Gyro) {
 					varType: 'double',
 					name: 'rSpeed'
 				},],
-				implementation: _robotSetSpeedImplementation
+				implementation: _robotDriveImplementation
 			},
+            {
+                                name: 'Robot~forward',
+                                retType: 'void',
+                                parameters: [],
+                                implementation: _robotForwardImplementation
+            },
+            {
+                                name: 'Robot~reverse',
+                                retType: 'void',
+                                parameters: [],
+                                implementation: _robotReverseImplementation
+            },
+            {
+                                name: 'Robot~stop',
+                                retType: 'void',
+                                parameters: [],
+                                implementation: _robotStopImplementation
+            },
+            {
+                                name: 'Robot~setSpeed',
+                                retType: 'void',
+                                parameters: [{
+                                             varType: 'double',
+                                             name: 'speed'
+                                             }],
+                                implementation: _robotSetSpeedImplementation
+            },
             {
                   name: 'Robot~turnLeft',
                   retType: 'void',

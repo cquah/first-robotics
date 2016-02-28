@@ -142,6 +142,7 @@ function (Geomutil) {
 		//all speeds are in logical units per second
 		var _leftSpeed = 0;
 		var _rightSpeed = 0;
+        var _savedSpeed = 3;
 
 		var _bearing = 0; //in degrees
 
@@ -224,6 +225,15 @@ function (Geomutil) {
 				_rightSpeed = speed;
 			}
 		});
+       
+        Object.defineProperty(this, 'savedSpeed', {
+            get: function() {
+                return _savedSpeed;
+            },
+            set: function(speed) {
+                _savedSpeed = speed;
+            }
+        });
 
 		Object.defineProperty(this, 'domElement', {
 			get: function() {
