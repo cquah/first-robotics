@@ -155,20 +155,20 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             //Load any samples
             var sampleList = document.getElementById('cboSamples');
             var samples = Samples.sampleList;
-            for (var i = 0, len = samples.length; i < len; i++) {
+            /*for (var i = 0, len = samples.length; i < len; i++) {
                 var sample = samples[i];
                 var opt = document.createElement('option');
                 opt.value = i;
                 opt.innerText = sample.title;
                 sampleList.appendChild(opt);
-            }
+            }*/
 
             var loadSampleBtn = document.getElementById('btnLoadSample');
             loadSampleBtn.addEventListener('click', function() {
-                var idx = sampleList.selectedIndex;
-                if (idx !== -1) {
-                    editor.getSession().setValue(samples[idx].code);
-                }
+                //var idx = sampleList.selectedIndex;
+                //if (idx !== -1) {
+                    editor.getSession().setValue(samples[0].code);
+                //}
             });
 
             //Load any fields
@@ -185,6 +185,13 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             var fieldTypeDropDown = document.getElementById('fieldTypes');
             fieldTypeDropDown.addEventListener('change', function() {
                 theField.setField(parseInt(this.value));
+                _resetField();
+            });
+
+            var obstacleCnt = document.getElementById('numOfObstacles');
+            obstacleCnt.addEventListener('change', function() {
+                console.log("OBSATCLE EVENT");
+                _resetField();
             });
 
             //UI
@@ -299,54 +306,11 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
             startStopBtn.addEventListener('click', function() {
                 if (simulation.isRunning) {
                     simulation.stop();
+                    _enableControlArea();
                 }
                 else {
-                    // as long as the robot is the only item on the field, re-populate the obstacles
-                    if(theField.getFieldItemsSize() === 1)
-                    {
-                    	//==== Add some random obstacles ===
-    		            //this could be exported to its own function
-    		            //could replace these "boxes" with imgs
-    		            //warning: magic numbers in use
-    		            var numOfRndObstacles = document.getElementById('numOfObstacles').value;
-                        console.log("numOfRndObstacles: " + numOfRndObstacles);
-                        if(numOfRndObstacles === "" || isNaN(numOfRndObstacles)  || 
-                            numOfRndObstacles < theField.Obstacles.MIN || numOfRndObstacles > theField.Obstacles.MAX)
-                        {
-                            numOfRndObstacles = theField.Obstacles.DEFAULT; 
-                        }
-
-                        console.log("fieldTypeDropDown: " + fieldTypeDropDown.value);
-                        var fieldId = parseInt(fieldTypeDropDown.value);
-    		            for(var i = 0; i < numOfRndObstacles; i++) {
-    		            	var x = Math.floor(Math.random() * 50) + 1;  
-    		            	var y = Math.floor(Math.random() * 20) + 1;
-
-                            // don't draw to close to the robot
-                            if(Math.abs(x-robot.position.x) <= 2 && Math.abs(y-robot.position.y) <= 2)
-                            {
-                                console.log("continue");
-                                continue;
-                            }  
-
-    		            	var obstacle1 = new FieldObstacle( {x: x, y: y},
-                                { 
-                                    width: FieldObstacle.ObstacleSize.WIDTH, 
-                                    height: FieldObstacle.ObstacleSize.HEIGHT
-                                }, 
-                                0, fieldId, (fieldId === -1) 
-                            );
-
-    						theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
-    		            }
-
-			    //TODO change the owners of these methods / logic for refreshing pre-loading of obstacles for robot
-			    robot.refreshObstacles();
-			    robot.getSensor(0).refreshObstacles();
-    				
-    		            //==== End obstacles ====
-                    }
-            
+                    _disableControlArea();
+                    
                     //reset the network tables
                     networkTableValues = {};
                     networkTableDataSource.localdata = _generateNetworkTableView(networkTableValues);
@@ -363,6 +327,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 outputList.innerHTML = "";
             })
 
+            var compilePass = false;
             var loaderArea = document.getElementById('loader');
             compileBtn.addEventListener('click', function() {
                 editor.getSession().clearAnnotations();
@@ -387,6 +352,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
 
                         simulation.loadProgramAST(result);
                         startStopBtn.disabled = false;
+                        compilePass = true;
                         loaderArea.classList.remove('loading');
                         printOutput("COMPILE", "Compilation Complete");
                     }
@@ -395,6 +361,7 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                             throw e;
                         }
                         startStopBtn.disabled = true;
+                        compilePass = false;
 
                         //Do error highlighting
                         var line, col;
@@ -426,11 +393,8 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 _resetRobot();
                 if (simulation) {
                     simulation.reset();
-                    startStopBtn.disabled = false;
-
-                    if(!simulation.isRunning)
-                    {
-                        theField.resetFieldItems();
+                    if(compilePass) {
+                        startStopBtn.disabled = false;
                     }
                 }
             });
@@ -477,6 +441,70 @@ function($, jqxWidgets, _, Robot, Field, FieldObstacle,
                 robot.rotationalSpeed = 0;
                 robot.bearing = 0;
                 robot.resetSensors();
+            }
+
+            function _resetField() {
+                theField.resetFieldItems();
+
+                // as long as the robot is the only item on the field, re-populate the obstacles
+                if(theField.getFieldItemsSize() === 1)
+                {
+                     //==== Add some random obstacles ===
+                    //this could be exported to its own function
+                    //could replace these "boxes" with imgs
+                    //warning: magic numbers in use
+                    var numOfRndObstacles = document.getElementById('numOfObstacles').value;
+                    if(numOfRndObstacles === "" || isNaN(numOfRndObstacles)  || 
+                        numOfRndObstacles < theField.Obstacles.MIN || numOfRndObstacles > theField.Obstacles.MAX)
+                    {
+                        numOfRndObstacles = theField.Obstacles.MIN; 
+                    }
+
+                    var fieldId = parseInt(fieldTypeDropDown.value);
+                    for(var i = 0; i < numOfRndObstacles; i++) {
+                        var x = Math.floor(Math.random() * 50) + 2;  
+                        var y = Math.floor(Math.random() * 20) + 2;
+
+                        // don't draw to close to the robot
+                        if(Math.abs(x-robot.position.x) <= 2 && Math.abs(y-robot.position.y) <= 2)
+                        {
+                            console.log("continue");
+                            continue;
+                        }  
+
+                        var obstacle1 = new FieldObstacle( {x: x, y: y},
+                            { 
+                                width: FieldObstacle.ObstacleSize.WIDTH, 
+                                height: FieldObstacle.ObstacleSize.HEIGHT
+                            }, 
+                            0, fieldId, (fieldId === -1) 
+                        );
+
+                        theField.addItem(obstacle1, theField.FieldItemType.OBSTACLE);
+                    }
+                        
+                     //TODO change the owners of these methods / logic for refreshing pre-loading of obstacles for robot
+                     robot.refreshObstacles();
+                     robot.getSensor(0).refreshObstacles();
+                
+                    //==== End obstacles ====
+                }              
+            }
+
+            function _enableControlArea() {
+                compileBtn.disabled = 
+                resetButton.disabled =
+                loadSampleBtn.disabled = 
+                fieldTypeDropDown.disabled = 
+                obstacleCnt.disabled = false;
+            }
+
+            function _disableControlArea() {
+                compileBtn.disabled = 
+                resetButton.disabled =
+                loadSampleBtn.disabled = 
+                fieldTypeDropDown.disabled = 
+                obstacleCnt.disabled = true;
             }
 
             theField.forceRedraw();

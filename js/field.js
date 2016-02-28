@@ -262,7 +262,6 @@ function () {
 	Field.prototype.Obstacles = {
 		MIN: 0,
 		MAX: 100,
-		DEFAULT: 10
 	};
 
 	Field.prototype.FieldType = {

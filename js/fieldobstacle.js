@@ -129,8 +129,8 @@ function(Geomutil) {
 	};
 
 	FieldObstacle.ObstacleSize = {
-		WIDTH: 2,
-		HEIGHT: 2
+		WIDTH: 3,
+		HEIGHT: 3
 	}
 
 	FieldObstacle.prototype.ObstacleColor = {
